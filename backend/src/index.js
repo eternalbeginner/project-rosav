@@ -12,6 +12,8 @@ import prisma from 'libs/prisma';
 import appConfig from 'configs/app';
 import tokenConfig from 'configs/token';
 
+import routes from 'routes';
+
 const app = express();
 
 app.use(cors({ credentials: true, origin: ['http://localhost:3000'] }));
@@ -44,6 +46,8 @@ passport.use(
     },
   ),
 );
+
+app.use('/api', routes);
 
 app.listen(appConfig.port, () => {
   appConfig.nodeEnv === 'development' && console.log(`Listening on port ${appConfig.port}`);

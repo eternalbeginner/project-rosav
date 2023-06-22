@@ -50,10 +50,5 @@
     "build": "babel src --out-dir dist",
     "dev": "nodemon --exec babel-node src/index.js",
     "start": "npm run build && node dist/index.js"
-  },
-  "_moduleAliases": {
-    "root": ".",
-    "controllers": "src/controllers",
-    "routes": "src/routes"
   }
 }

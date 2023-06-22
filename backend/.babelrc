@@ -9,7 +9,8 @@
           "controllers": "./src/controllers",
           "libs": "./src/libs",
           "models": "./src/models",
-          "routes": "./src/routes"
+          "routes": "./src/routes",
+          "validations": "./src/validations"
         }
       }
     ]
