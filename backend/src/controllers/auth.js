@@ -1,20 +1,39 @@
 import { compareSync } from 'bcryptjs';
 import { matchedData, validationResult } from 'express-validator';
+import { verify } from 'jsonwebtoken';
+
+import tokenConfig from 'configs/token';
 
 import prisma from 'libs/prisma';
-import { generateAccessToken, generateRefreshToken } from 'libs/util';
+import { generateAccessToken, generateRefreshToken, responseFromThrowedError } from 'libs/util';
 
-class AuthenticationError extends Error {
-  constructor(message, field, code = 500) {
-    super(message);
+import AuthenticationError from 'errors/AuthenticationError';
 
-    this.code = code;
-    this.field = field;
+export const reSignIn = async (req, res) => {
+  const error = validationResult(req).errors;
+  const data = matchedData(req);
+  const user = req.user;
+
+  if (error.length > 0) return res.status(400).json({ error });
+
+  try {
+    verify(data.refreshToken, tokenConfig.secret, (err, _) => {
+      if (err) {
+        throw new AuthenticationError('Invalid refresh token provided', 'refreshToken', 401);
+      }
+
+      const newAccessToken = generateAccessToken(user);
+
+      return res.json({
+        data: {
+          accessToken: newAccessToken,
+          refreshToken: data.refreshToken,
+        },
+      });
+    });
+  } catch (err) {
+    return responseFromThrowedError(res, err);
   }
-}
-
-export const rotate = async (req, res) => {
-  return res.json({});
 };
 
 export const signIn = async (req, res) => {
@@ -44,15 +63,7 @@ export const signIn = async (req, res) => {
       error,
     });
   } catch (err) {
-    if (err instanceof AuthenticationError)
-      return res.status(err.code).json({
-        error: [{ type: 'field', msg: err.message, path: err.field }],
-      });
-
-    return res.status(500).json({
-      message: err.message,
-      error: [{ type: 'all', msg: err.message }],
-    });
+    return responseFromThrowedError(res, err);
   }
 };
 
