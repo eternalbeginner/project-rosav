@@ -1,0 +1,27 @@
+{
+  "name": "rosav",
+  "description": "recording of student achievements and violations",
+  "private": true,
+  "readme": "https://github.com/eternalbeginner/project-rosav/blob/main/README.md",
+  "version": "1.0.0",
+  "contributors": [
+    {
+      "name": "Dwi Payana",
+      "email": "ini.dwiii@gmail.com"
+    },
+    {
+      "name": "Yudha Harista",
+      "email": "yudhaharistaa@gmail.com"
+    }
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eternalbeginner/project-rosav"
+  },
+  "scripts": {}
+}
