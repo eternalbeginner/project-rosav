@@ -1,0 +1,54 @@
+{
+  "name": "rosav-backend",
+  "description": "backend of recording of student achievements and violations",
+  "private": true,
+  "readme": "https://github.com/eternalbeginner/project-rosav/blob/main/README.md",
+  "version": "1.0.0",
+  "contributors": [
+    {
+      "name": "Dwi Payana",
+      "email": "ini.dwiii@gmail.com"
+    },
+    {
+      "name": "Yudha Harista",
+      "email": "yudhaharistaa@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "@prisma/client": "4.16.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "morgan": "^1.10.0",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
+    "prisma": "^4.16.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.5",
+    "@babel/core": "^7.22.5",
+    "@babel/node": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "nodemon": "^2.0.22"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "prisma": {
+    "seed": "npx babel-node prisma/seed.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eternalbeginner/project-rosav/tree/main/backend"
+  },
+  "scripts": {
+    "build": "babel src --out-dir dist",
+    "dev": "nodemon --exec babel-node src/index.js",
+    "start": "npm run build && node dist/index.js"
+  }
+}

@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  directUrl         = env("DATABASE_DIRECT_URL")
+  shadowDatabaseUrl = env("DATABASE_SHADOW_URL")
+}
+
+model Major {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+
+  users User[] @relation("UserMajor")
+}
+
+model Role {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+
+  users User[] @relation("UserRole")
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime?
+
+  achievements Achievement[] @relation("AchievementCategory")
+  violations   Violation[]   @relation("ViolationCategory")
+}
+
+model Achievement {
+  id          String    @id @default(cuid())
+  categoryId  String
+  fromId      String
+  toId        String
+  title       String
+  description String
+  points      Int       @default(0)
+  tags        String[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+
+  category Category @relation("AchievementCategory", fields: [categoryId], references: [id])
+  from     User     @relation("AchievementFrom", fields: [fromId], references: [id])
+  to       User     @relation("AchievementTo", fields: [toId], references: [id])
+}
+
+model Violation {
+  id          String    @id @default(cuid())
+  categoryId  String
+  fromId      String
+  toId        String
+  title       String
+  description String
+  points      Int       @default(0)
+  tags        String[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+
+  category Category @relation("ViolationCategory", fields: [categoryId], references: [id])
+  from     User     @relation("ViolationFrom", fields: [fromId], references: [id])
+  to       User     @relation("ViolationTo", fields: [toId], references: [id])
+}
+
+model User {
+  id                        String    @id @default(cuid())
+  majorId                   String?
+  roleId                    String
+  regNumber                 String    @unique
+  email                     String    @unique
+  password                  String
+  name                      String
+  avatarUrl                 String?
+  isActive                  Boolean   @default(true)
+  isSuspended               Boolean   @default(false)
+  obtainedAchievementPoints Int       @default(0)
+  obtainedViolationPoints   Int       @default(0)
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime?
+
+  obtainedAchivements  Achievement[] @relation("AchievementTo")
+  obtainedViolations   Violation[]   @relation("ViolationTo")
+  reportedAchievements Achievement[] @relation("AchievementFrom")
+  reportedViolations   Violation[]   @relation("ViolationFrom")
+
+  major Major? @relation("UserMajor", fields: [majorId], references: [id])
+  role  Role   @relation("UserRole", fields: [roleId], references: [id])
+}
