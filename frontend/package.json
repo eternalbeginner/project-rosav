@@ -1,0 +1,52 @@
+{
+  "name": "rosav-frontend",
+  "description": "frontend of recording of student achievements and violations",
+  "private": true,
+  "readme": "https://github.com/eternalbeginner/project-rosav/blob/main/README.md",
+  "type": "module",
+  "version": "1.0.0",
+  "contributors": [
+    {
+      "name": "Dwi Payana",
+      "email": "ini.dwiii@gmail.com"
+    },
+    {
+      "name": "Yudha Harista",
+      "email": "yudhaharistaa@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@mantine/core": "^6.0.14",
+    "@mantine/hooks": "^6.0.14",
+    "@mantine/modals": "^6.0.14",
+    "@mantine/notifications": "^6.0.14",
+    "axios": "^1.4.0",
+    "jsonwebtoken": "^9.0.0",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.13.0",
+    "sort-by": "^1.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-legacy": "^4.0.5",
+    "@vitejs/plugin-react": "^4.0.0",
+    "terser": "^5.18.1",
+    "vite": "^4.3.9"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eternalbeginner/project-rosav/tree/main/frontend"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  }
+}
