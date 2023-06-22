@@ -16,6 +16,9 @@ dependencies:
   '@mantine/notifications':
     specifier: ^6.0.14
     version: 6.0.14(@mantine/core@6.0.14)(@mantine/hooks@6.0.14)(react-dom@18.2.0)(react@18.2.0)
+  '@react-input/mask':
+    specifier: ^1.0.14
+    version: 1.0.14(react-dom@18.2.0)(react@18.2.0)
   axios:
     specifier: ^1.4.0
     version: 1.4.0
@@ -1840,6 +1843,35 @@ packages:
     dependencies:
       '@babel/runtime': 7.22.5
       react: 18.2.0
+    dev: false
+
+  /@react-input/core@1.0.2(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-UEw70ywxGz1bC6KcLWBUdDgshG288zcTVwz3qZsve1vfve1bBWykglobaiMH+YmJRmfhPnxZ1emGnQDE/6sueA==}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@react-input/mask@1.0.14(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-7Cq1eAm1UqkSkx+lSIvddsqsH2SXUn+UyLERoSqoeEc91oiA2m+FI5iH83c32YkKc//9PQaQKPU21xYvuxaKgg==}
+    peerDependencies:
+      '@types/react': '>=16.8'
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@react-input/core': 1.0.2(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@remix-run/router@1.6.3:

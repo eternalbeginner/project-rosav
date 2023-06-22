@@ -6,7 +6,7 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Root from 'routes/root';
-import Login from 'routes/auth/login';
+import Login, { action as loginAction } from 'routes/auth/login';
 
 import AuthLayout from 'components/layouts/AuthLayout';
 
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
   {
     path: '/auth',
     element: <AuthLayout />,
-    children: [{ path: 'login', element: <Login /> }],
+    children: [{ path: 'login', action: loginAction, element: <Login /> }],
   },
 ]);
 
