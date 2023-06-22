@@ -4,7 +4,13 @@ import { Notifications } from '@mantine/notifications';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Root from './app/root';
+
+import Root from 'routes/root';
+import Login from 'routes/auth/login';
+
+import AuthLayout from 'components/layouts/AuthLayout';
+
+import AuthProvider from 'providers/AuthProvider';
 
 const root = createRoot(document.getElementById('root'));
 const router = createBrowserRouter([
@@ -12,14 +18,21 @@ const router = createBrowserRouter([
     path: '/',
     element: <Root />,
   },
+  {
+    path: '/auth',
+    element: <AuthLayout />,
+    children: [{ path: 'login', element: <Login /> }],
+  },
 ]);
 
 root.render(
   <StrictMode>
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <ModalsProvider>
-        <Notifications />
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <Notifications />
+          <RouterProvider router={router} />
+        </AuthProvider>
       </ModalsProvider>
     </MantineProvider>
   </StrictMode>,
