@@ -3,12 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("APP_DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  directUrl         = env("DATABASE_DIRECT_URL")
+  shadowDatabaseUrl = env("DATABASE_SHADOW_URL")
 }
 
 model Major {
-  id        String    @id @default(uuid())
+  id        String    @id @default(cuid())
   name      String
   slug      String
   createdAt DateTime  @default(now())
@@ -18,7 +20,7 @@ model Major {
 }
 
 model Role {
-  id        String    @id @default(uuid())
+  id        String    @id @default(cuid())
   name      String
   slug      String
   createdAt DateTime  @default(now())
@@ -28,7 +30,7 @@ model Role {
 }
 
 model Category {
-  id        String    @id @default(uuid())
+  id        String    @id @default(cuid())
   name      String
   slug      String
   createdAt DateTime  @default(now())
@@ -39,7 +41,7 @@ model Category {
 }
 
 model Achievement {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   categoryId  String
   fromId      String
   toId        String
@@ -56,7 +58,7 @@ model Achievement {
 }
 
 model Violation {
-  id          String    @id @default(uuid())
+  id          String    @id @default(cuid())
   categoryId  String
   fromId      String
   toId        String
@@ -73,8 +75,8 @@ model Violation {
 }
 
 model User {
-  id                        String    @id @default(uuid())
-  majorId                   String
+  id                        String    @id @default(cuid())
+  majorId                   String?
   roleId                    String
   regNumber                 String    @unique
   email                     String    @unique
