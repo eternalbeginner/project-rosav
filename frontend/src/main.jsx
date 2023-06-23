@@ -7,8 +7,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Root from 'routes/root';
 import Login, { action as loginAction } from 'routes/auth/login';
+import ResetPassword, { loader as resetPasswordLoader } from 'routes/auth/reset-password';
 
 import AuthLayout from 'components/layouts/AuthLayout';
+import RootError from 'components/errors/RootError';
 
 import AuthProvider from 'providers/AuthProvider';
 
@@ -17,11 +19,15 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <Root />,
+    errorElement: <RootError />,
   },
   {
     path: '/auth',
     element: <AuthLayout />,
-    children: [{ path: 'login', action: loginAction, element: <Login /> }],
+    children: [
+      { path: 'login', action: loginAction, element: <Login /> },
+      { path: 'reset-password', loader: resetPasswordLoader, element: <ResetPassword /> },
+    ],
   },
 ]);
 

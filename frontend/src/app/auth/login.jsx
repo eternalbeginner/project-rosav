@@ -1,4 +1,5 @@
 import {
+  Alert,
   Anchor,
   Button,
   LoadingOverlay,
@@ -10,7 +11,7 @@ import {
 } from '@mantine/core';
 import { useMask } from '@react-input/mask';
 import { useEffect, useState } from 'react';
-import { RiHashtag, RiLockLine } from 'react-icons/ri';
+import { RiErrorWarningLine, RiHashtag, RiLockLine } from 'react-icons/ri';
 import { Form, Link, json, useActionData, useNavigate, useSubmit } from 'react-router-dom';
 
 import useAuth from 'hooks/useAuth';
@@ -100,6 +101,11 @@ export default function Login() {
       </Stack>
       <Form method="post">
         <Stack>
+          {errors.all && (
+            <Alert color="red" variant="filled" icon={<RiErrorWarningLine />}>
+              {errors.all}
+            </Alert>
+          )}
           <Stack spacing="sm" pos="relative">
             <LoadingOverlay visible={isLoading} />
             <TextInput
@@ -121,7 +127,7 @@ export default function Login() {
           </Stack>
           <Text color="dimmed" size="sm">
             Forgot your password?{' '}
-            <Anchor component={Link} href="/auth/reset-password">
+            <Anchor component={Link} to="/auth/reset-password">
               Click here
             </Anchor>
           </Text>
