@@ -1,8 +1,5 @@
-export default class AuthenticationError extends Error {
-  constructor(message, field, code = 500) {
-    super(message);
+import BaseError from './BaseError';
 
-    this.code = code;
-    this.field = field;
-  }
+export default class AuthenticationError extends BaseError {
+  name = 'Authentication Error';
 }
