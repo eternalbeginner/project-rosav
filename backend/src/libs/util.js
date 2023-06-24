@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import tokenConfig from 'configs/token';
 
-import AuthenticationError from 'errors/AuthenticationError';
+import BaseError from 'errors/BaseError';
 
 export function generateAccessToken(user) {
   return jwt.sign(
@@ -10,7 +10,7 @@ export function generateAccessToken(user) {
       id: user.id,
       regNumber: user.regNumber,
       name: user.name,
-      roleSlug: user.role.slug,
+      roleSlug: user.role?.slug ?? user.roleSlug,
     },
     tokenConfig.secret,
     {
@@ -34,13 +34,13 @@ export function generateRefreshToken(user) {
 }
 
 export function responseFromThrowedError(res, err) {
-  if (err instanceof AuthenticationError)
+  if (err instanceof BaseError)
     return res.status(err.code).json({
-      error: [{ type: 'field', msg: err.message, path: err.field }],
+      error: [{ type: err.type, msg: err.message, path: err.path }],
     });
 
   return res.status(500).json({
     message: err.message,
-    error: [{ type: 'all', msg: err.message }],
+    error: [{ type: 'server', msg: err.message }],
   });
 }
