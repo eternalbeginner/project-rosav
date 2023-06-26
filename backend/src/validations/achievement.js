@@ -3,8 +3,9 @@ import { checkSchema } from 'express-validator';
 export const findById = checkSchema({
   achievementId: {
     in: 'params',
+    errorMessage: 'Invalid achievement id provided',
     exists: { bail: true, errorMessage: 'Parameter achievement id is required' },
-    isString: { bail: true, errorMessage: 'Invalid achievement id provided' },
+    isString: { bail: true },
   },
 });
 
@@ -12,6 +13,7 @@ export const create = checkSchema({
   categoryId: {
     in: 'body',
     optional: true,
+    errorMessage: 'Invalid achievement id provided',
     isString: { bail: true },
   },
   fromId: {
@@ -78,12 +80,14 @@ export const create = checkSchema({
 export const updateById = checkSchema({
   achievementId: {
     in: 'params',
+    errorMessage: 'Invalid achievement id provided',
     exists: { bail: true, errorMessage: 'Parameter achievement id is required' },
     isString: { bail: true },
   },
   categoryId: {
     in: 'body',
     optional: true,
+    errorMessage: 'Invalid category id provided',
     isString: { bail: true },
   },
   toId: {
@@ -144,6 +148,7 @@ export const updateById = checkSchema({
 export const deleteById = checkSchema({
   achievementId: {
     in: 'params',
+    errorMessage: 'Invalid achievement id provided',
     exists: { bail: true, errorMessage: 'Parameter achievement id is required' },
     isString: { bail: true },
   },
