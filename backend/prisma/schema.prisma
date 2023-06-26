@@ -42,7 +42,7 @@ model Category {
 
 model Achievement {
   id          String    @id @default(cuid())
-  categoryId  String
+  categoryId  String?
   fromId      String
   toId        String
   title       String
@@ -51,15 +51,16 @@ model Achievement {
   tags        String[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime?
+  deletedAt   DateTime?
 
-  category Category @relation("AchievementCategory", fields: [categoryId], references: [id])
-  from     User     @relation("AchievementFrom", fields: [fromId], references: [id])
-  to       User     @relation("AchievementTo", fields: [toId], references: [id])
+  category Category? @relation("AchievementCategory", fields: [categoryId], references: [id])
+  from     User      @relation("AchievementFrom", fields: [fromId], references: [id])
+  to       User      @relation("AchievementTo", fields: [toId], references: [id])
 }
 
 model Violation {
   id          String    @id @default(cuid())
-  categoryId  String
+  categoryId  String?
   fromId      String
   toId        String
   title       String
@@ -68,10 +69,11 @@ model Violation {
   tags        String[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime?
+  deletedAt   DateTime?
 
-  category Category @relation("ViolationCategory", fields: [categoryId], references: [id])
-  from     User     @relation("ViolationFrom", fields: [fromId], references: [id])
-  to       User     @relation("ViolationTo", fields: [toId], references: [id])
+  category Category? @relation("ViolationCategory", fields: [categoryId], references: [id])
+  from     User      @relation("ViolationFrom", fields: [fromId], references: [id])
+  to       User      @relation("ViolationTo", fields: [toId], references: [id])
 }
 
 model User {
