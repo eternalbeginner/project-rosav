@@ -33,7 +33,7 @@ export function generateRefreshToken(user) {
   });
 }
 
-export function responseFromThrowedError(res, err) {
+export function responseFromThrownError(res, err) {
   if (err instanceof BaseError)
     return res.status(err.code).json({
       error: [{ type: err.type, msg: err.message, path: err.path }],

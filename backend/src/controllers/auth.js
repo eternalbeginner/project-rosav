@@ -5,7 +5,7 @@ import { decode, verify } from 'jsonwebtoken';
 import tokenConfig from 'configs/token';
 
 import * as userModel from 'models/user';
-import { generateAccessToken, generateRefreshToken, responseFromThrowedError } from 'libs/util';
+import { generateAccessToken, generateRefreshToken, responseFromThrownError } from 'libs/util';
 
 import AuthenticationError from 'errors/AuthenticationError';
 
@@ -32,10 +32,11 @@ export const reSignIn = async (req, res) => {
           accessToken: newAccessToken,
           refreshToken: data.refreshToken,
         },
+        error,
       });
     });
   } catch (err) {
-    return responseFromThrowedError(res, err);
+    return responseFromThrownError(res, err);
   }
 };
 
@@ -67,7 +68,7 @@ export const signIn = async (req, res) => {
       error,
     });
   } catch (err) {
-    return responseFromThrowedError(res, err);
+    return responseFromThrownError(res, err);
   }
 };
 
