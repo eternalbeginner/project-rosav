@@ -2,6 +2,14 @@ import prisma from 'libs/prisma';
 
 import ModelError from 'errors/ModelError';
 
+const ACHIEVEMENT_FIND_ALL_REL_USER_QUERY_OBJ = { id: true, regNumber: true, name: true };
+const ACHIEVEMENT_FIND_ONE_REL_USER_QUERY_OBJ = {
+  id: true,
+  regNumber: true,
+  name: true,
+  avatarUrl: true,
+};
+
 export async function findAll(filters = {}, errorOptions = {}) {
   try {
     const achievements = await prisma.achievement.findMany({
@@ -10,8 +18,8 @@ export async function findAll(filters = {}, errorOptions = {}) {
       },
       include: {
         category: true,
-        from: { select: { id: true, regNumber: true, name: true } },
-        to: { select: { id: true, regNumber: true, name: true } },
+        from: { select: ACHIEVEMENT_FIND_ALL_REL_USER_QUERY_OBJ },
+        to: { select: ACHIEVEMENT_FIND_ALL_REL_USER_QUERY_OBJ },
       },
     });
 
@@ -30,8 +38,8 @@ export async function findByAchievementId(achievementId, errorOptions = {}) {
       where: { id: achievementId },
       include: {
         category: true,
-        from: { select: { id: true, regNumber: true, name: true, avatarUrl: true } },
-        to: { select: { id: true, regNumber: true, name: true, avatarUrl: true } },
+        from: { select: ACHIEVEMENT_FIND_ALL_REL_USER_QUERY_OBJ },
+        to: { select: ACHIEVEMENT_FIND_ONE_REL_USER_QUERY_OBJ },
       },
     });
 
@@ -46,24 +54,33 @@ export async function findByAchievementId(achievementId, errorOptions = {}) {
 
 export async function create(fromId, toId, newAchievement, errorOptions = {}) {
   try {
-    await prisma.achievement.create({
-      data: {
-        title: newAchievement.title,
-        description: newAchievement.description,
-        points: newAchievement.points,
-        tags: newAchievement.tags,
-        from: { connect: { id: fromId } },
-        to: { connect: { id: toId } },
-        category: {
-          ...('categoryId' in newAchievement
-            ? { connect: { id: newAchievement.categoryId } }
-            : { create: newAchievement.newCategory }),
+    await prisma.$transaction([
+      prisma.achievement.create({
+        data: {
+          title: newAchievement.title,
+          description: newAchievement.description,
+          points: newAchievement.points,
+          tags: newAchievement.tags,
+          from: { connect: { id: fromId } },
+          to: { connect: { id: toId } },
+          category: {
+            ...('categoryId' in newAchievement
+              ? { connect: { id: newAchievement.categoryId } }
+              : { create: newAchievement.newCategory }),
+          },
         },
-      },
-    });
+      }),
+      prisma.user.update({
+        data: {
+          obtainedAchievementPoints: { increment: newAchievement.points },
+        },
+        where: { id: toId },
+      }),
+    ]);
 
     return true;
-  } catch {
+  } catch (err) {
+    console.log(err);
     throw new ModelError('Something went wrong while creating new achievement', 500, {
       ...errorOptions,
       type: 'create',
@@ -77,46 +94,57 @@ export async function updateByAchievementId(
   errorOptions = {},
 ) {
   try {
+    const oldAchievementData = await prisma.achievement.findFirstOrThrow({
+      where: { id: achievementId },
+      select: { toId: true, points: true },
+    });
+
     const achievementUpdatedData = {};
+    const achievementUpdatedPoints = oldAchievementData.points - (updatedAchievement.points ?? 0);
 
-    if ('title' in updatedAchievement) {
-      achievementUpdatedData['title'] = updatedAchievement.title;
-    }
+    ['categoryId', 'toId', 'title', 'description', 'points', 'tags'].forEach((col) => {
+      if (col in updatedAchievement) {
+        achievementUpdatedData[col] = updatedAchievement[col];
+      }
+    });
 
-    if ('description' in updatedAchievement) {
-      achievementUpdatedData['description'] = updatedAchievement.description;
-    }
+    if (!('categoryId' in updatedAchievement) && 'newCategory' in updatedAchievement) {
+      const newCategory = await prisma.category.create({
+        data: updatedAchievement.newCategory,
+        select: { id: true },
+      });
 
-    if ('points' in updatedAchievement) {
-      achievementUpdatedData['points'] = updatedAchievement.points;
-    }
-
-    if ('tags' in updatedAchievement) {
-      achievementUpdatedData['tags'] = updatedAchievement.tags;
-    }
-
-    if ('toId' in updatedAchievement) {
-      achievementUpdatedData['to'] = { connect: { id: updatedAchievement.toId } };
-    }
-
-    if ('categoryId' in updatedAchievement || 'newCategory' in updatedAchievement) {
-      achievementUpdatedData['category'] = {};
-
-      if ('categoryId' in updatedAchievement)
-        achievementUpdatedData['category']['connect'] = { id: updatedAchievement.categoryId };
-      else achievementUpdatedData['category']['create'] = updatedAchievement.newCategory;
+      achievementUpdatedData['categoryId'] = newCategory.id;
     }
 
     achievementUpdatedData['updatedAt'] = new Date();
 
-    await prisma.achievement.update({
-      data: achievementUpdatedData,
-      where: { id: achievementId },
-    });
+    await prisma.$transaction([
+      prisma.achievement.update({
+        data: achievementUpdatedData,
+        where: { id: achievementId },
+      }),
+      ...(updatedAchievement.toId && updatedAchievement.toId !== oldAchievementData.toId
+        ? [
+            prisma.user.update({
+              data: { obtainedAchievementPoints: { decrement: oldAchievementData.points } },
+              where: { id: oldAchievementData.toId },
+            }), // remove the old points from the old user
+            prisma.user.update({
+              data: { obtainedAchievementPoints: { increment: updatedAchievement.points } },
+              where: { id: updatedAchievement.toId },
+            }), // add the new updated points to the new user
+          ]
+        : [
+            prisma.user.update({
+              data: { obtainedAchievementPoints: { decrement: achievementUpdatedPoints } },
+              where: { id: oldAchievementData.toId },
+            }),
+          ]),
+    ]);
 
     return true;
-  } catch (err) {
-    console.error(err);
+  } catch {
     throw new ModelError(`Something went wrong while updating achievement #${achievementId}`, 500, {
       ...errorOptions,
       type: 'update',
@@ -126,8 +154,13 @@ export async function updateByAchievementId(
 
 export async function deleteByAchievementId(achievementId, errorOptions = {}) {
   try {
-    await prisma.achievement.delete({
+    const deletedAchievement = await prisma.achievement.delete({
       where: { id: achievementId },
+    });
+
+    await prisma.user.update({
+      data: { obtainedAchievementPoints: { decrement: deletedAchievement.points } },
+      where: { id: deletedAchievement.toId },
     });
 
     return true;
