@@ -131,7 +131,11 @@ export async function updateByAchievementId(
               where: { id: oldAchievementData.toId },
             }), // remove the old points from the old user
             prisma.user.update({
-              data: { obtainedAchievementPoints: { increment: updatedAchievement.points } },
+              data: {
+                obtainedAchievementPoints: {
+                  increment: updatedAchievement.points ?? oldAchievementData.points,
+                },
+              },
               where: { id: updatedAchievement.toId },
             }), // add the new updated points to the new user
           ]
